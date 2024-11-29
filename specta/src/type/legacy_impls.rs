@@ -10,6 +10,11 @@ const _: () = {
     impl<K: Type, V: Type> Flatten for indexmap::IndexMap<K, V> {}
 };
 
+#[cfg(feature = "geojson")]
+const _: () = {
+    impl_as!(geojson::FeatureCollection as String);
+};
+
 #[cfg(feature = "serde_json")]
 const _: () = {
     use serde_json::{Map, Number, Value};

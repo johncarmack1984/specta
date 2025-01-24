@@ -34,7 +34,7 @@ const _: () = {
     }
 
     impl Type for Number {
-        fn inline(_: &mut TypeMap, _: Generics) -> DataType {
+        fn inline(_: &mut TypeCollection, _: Generics) -> DataType {
             DataType::Enum(EnumType {
                 name: "Number".into(),
                 sid: None,
@@ -116,14 +116,14 @@ const _: () = {
     }
 
     impl Type for serde_yaml::Mapping {
-        fn inline(_: &mut TypeMap, _: Generics) -> DataType {
+        fn inline(_: &mut TypeCollection, _: Generics) -> DataType {
             // We don't type this more accurately because `serde_json` doesn't allow non-string map keys so neither does Specta
             DataType::Unknown
         }
     }
 
     impl Type for serde_yaml::value::TaggedValue {
-        fn inline(_: &mut TypeMap, _: Generics) -> DataType {
+        fn inline(_: &mut TypeCollection, _: Generics) -> DataType {
             DataType::Map(Map {
                 key_ty: Box::new(DataType::Primitive(PrimitiveType::String)),
                 value_ty: Box::new(DataType::Unknown),
@@ -132,7 +132,7 @@ const _: () = {
     }
 
     impl Type for serde_yaml::Number {
-        fn inline(_: &mut TypeMap, _: Generics) -> DataType {
+        fn inline(_: &mut TypeCollection, _: Generics) -> DataType {
             DataType::Enum(EnumType {
                 name: "Number".into(),
                 sid: None,
@@ -263,6 +263,17 @@ impl_as!(
     time::Time as String
     time::Duration as String
     time::Weekday as String
+);
+
+#[cfg(feature = "jiff")]
+impl_as!(
+    jiff::Timestamp as String
+    jiff::Zoned as String
+    jiff::Span as String
+    jiff::civil::Date as String
+    jiff::civil::Time as String
+    jiff::civil::DateTime as String
+    jiff::tz::TimeZone as String
 );
 
 #[cfg(feature = "bigdecimal")]
@@ -406,7 +417,7 @@ impl_as!(url::Url as String);
 
 #[cfg(feature = "either")]
 impl<L: Type, R: Type> Type for either::Either<L, R> {
-    fn inline(type_map: &mut TypeMap, generics: Generics) -> DataType {
+    fn inline(type_map: &mut TypeCollection, generics: Generics) -> DataType {
         DataType::Enum(EnumType {
             name: "Either".into(),
             sid: None,
@@ -452,7 +463,7 @@ impl<L: Type, R: Type> Type for either::Either<L, R> {
         })
     }
 
-    fn reference(type_map: &mut TypeMap, generics: &[DataType]) -> Reference {
+    fn reference(type_map: &mut TypeCollection, generics: &[DataType]) -> Reference {
         Reference {
             inner: DataType::Enum(EnumType {
                 name: "Either".into(),

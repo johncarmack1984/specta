@@ -64,6 +64,7 @@ Regenerate and commit bindings in the same change as the upgrade, because the ou
 
 - `serde_json::Value` exports as `Value` instead of `JsonValue`, since rc.23.
 - `f32` and `f64` export as `number | null`, since rc.25, because serde_json writes `NaN` and the infinities as `null`. Mark a field you know is finite with `#[specta(type = specta_typescript::Number)]` to keep `number`.
+- Under `specta_serde::Format`, an `Option<T>` field exports as `field?: T | null`, because the one shared type must also accept input that leaves the field out. `specta_serde::PhasesFormat` keeps `field: T | null` in the `_Serialize` type that Rust sends.
 - The file header changed in rc.23, and objects now print one field per line.
 
 ## Tauri apps
